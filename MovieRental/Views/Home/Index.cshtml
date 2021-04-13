@@ -1,0 +1,10 @@
+﻿@model MovieRental.Client.ViewModels.MoviesViewModel;
+<div class="bottomMarginDefault">
+</div>
+
+<div class="container">
+    @foreach (var item in Model.Movies)
+    {
+        <div class="h5"><a asp-action="Review" asp-controller="Home" asp-route-id="@item.Id">@item.Title</a></div>
+    }
+</div>
