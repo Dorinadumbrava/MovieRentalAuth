@@ -12,6 +12,7 @@ namespace MovieRental.API.Controllers
 {
     [Route("api/movies")]
     [ApiController]
+    [Authorize]
     public class MoviesController : ControllerBase
     {
         private readonly IMovieService movieService;

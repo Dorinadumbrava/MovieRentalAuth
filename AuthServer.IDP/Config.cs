@@ -22,9 +22,25 @@ namespace AuthServer.IDP
                     new List<string>() { "role" })
             };
 
+        public static IEnumerable<ApiScope> ApiScopes =>
+           new ApiScope[]
+           {
+                new ApiScope(
+                    "movierentalapi",
+                    "Movie Rental API")
+           };
         public static IEnumerable<ApiResource> Apis =>
-           new ApiResource[]
-           { };
+            new ApiResource[]
+            {
+                new ApiResource(
+                    "movierentalapi",
+                    "Movie Rental API",
+                    new List<string>() { "role" })
+                {
+                    Scopes = { "movierentalapi"},
+                    ApiSecrets = { new Secret("apisecret".Sha256()) }
+                }
+            };
 
         public static IEnumerable<Client> Clients =>
             new Client[]
@@ -53,7 +69,8 @@ namespace AuthServer.IDP
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
                         IdentityServerConstants.StandardScopes.Address,
-                        "roles"
+                        "roles",
+                        "movierentalapi"
                     },
                     ClientSecrets =
                     {

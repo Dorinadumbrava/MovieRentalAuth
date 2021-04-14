@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
+using MovieRental.Client.HttpHandlers;
 using MovieRental.Controllers;
 
 namespace MovieRental
@@ -34,13 +35,14 @@ namespace MovieRental
         {
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
+            services.AddTransient<BearerTokenHandler>();
             //the HttpClient will allow us to call or API
             services.AddHttpClient("APIClient", client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44318/");
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-            });
+            }).AddHttpMessageHandler<BearerTokenHandler>();
             //the IDPclient will allow us to call the UserInfo endpoint from IDP
             services.AddHttpClient("IDPClient", client =>
             {
@@ -67,6 +69,7 @@ namespace MovieRental
                 //options.UsePkce = false;
                 options.Scope.Add("address");
                 options.Scope.Add("roles");
+                options.Scope.Add("movierentalapi");
                 //options.ClaimActions.Remove("nbf"); //ClaimActions.Remove removes the filter that could delete the claim.
                 options.ClaimActions.DeleteClaims(new string[] { "sid", "idp", "s_hash", "auth_time"}); //Delete claim removes the claim
                 options.ClaimActions.MapUniqueJsonKey("role", "role");
