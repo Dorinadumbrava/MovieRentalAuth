@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -50,6 +52,13 @@ namespace MovieRental.Controllers
             }
 
             throw new Exception("Problem accessing the API");
+        }
+
+        public async Task Logout()
+        {
+
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme); //logout from aplication
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme); //logout from identity provider
         }
 
         public async Task<IActionResult> Review(Guid id)

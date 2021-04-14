@@ -39,6 +39,10 @@ namespace AuthServer.IDP
                     {
                         "https://localhost:44369/signin-oidc"
                     },
+                    PostLogoutRedirectUris = new List<string>()
+                    {
+                        "https://localhost:44369/signout-callback-oidc"
+                    },
                     AllowedScopes = //the scopes we have in the identity resources
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
