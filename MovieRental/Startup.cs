@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using IdentityModel;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -12,6 +13,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using MovieRental.Controllers;
 
@@ -64,11 +66,18 @@ namespace MovieRental
                 //Disabling Pkce protection won't work with the latest version of Identity server
                 //options.UsePkce = false;
                 options.Scope.Add("address");
+                options.Scope.Add("roles");
                 //options.ClaimActions.Remove("nbf"); //ClaimActions.Remove removes the filter that could delete the claim.
                 options.ClaimActions.DeleteClaims(new string[] { "sid", "idp", "s_hash", "auth_time"}); //Delete claim removes the claim
+                options.ClaimActions.MapUniqueJsonKey("role", "role");
                 options.SaveTokens = true;
                 options.ClientSecret = "secret";
                 options.GetClaimsFromUserInfoEndpoint = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    NameClaimType = JwtClaimTypes.GivenName,
+                    RoleClaimType = JwtClaimTypes.Role
+                };
             });
         }
 

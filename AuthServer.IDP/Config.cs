@@ -15,7 +15,11 @@ namespace AuthServer.IDP
             { 
                 new IdentityResources.OpenId(),
                 new IdentityResources.Profile(),
-                new IdentityResources.Address()
+                new IdentityResources.Address(),
+                new IdentityResource(
+                    "roles",
+                    "Your role(s)",
+                    new List<string>() { "role" })
             };
 
         public static IEnumerable<ApiResource> Apis =>
@@ -44,11 +48,12 @@ namespace AuthServer.IDP
                     {
                         "https://localhost:44369/signout-callback-oidc"
                     },
-                    AllowedScopes = //the scopes we have in the identity resources
+                    AllowedScopes = //the scopes we have in the identity resources and our client can request
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
                         IdentityServerConstants.StandardScopes.Profile,
-                        IdentityServerConstants.StandardScopes.Address
+                        IdentityServerConstants.StandardScopes.Address,
+                        "roles"
                     },
                     ClientSecrets =
                     {

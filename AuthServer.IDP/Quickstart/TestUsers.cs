@@ -21,7 +21,8 @@ namespace IdentityServerHost.Quickstart.UI
                  {
                      new Claim("given_name", "Anthony"),
                      new Claim("family_name", "Lockwood"),
-                     new Claim("address", "alockwood@test.com")
+                     new Claim("address", "alockwood@test.com"),
+                     new Claim("role", "Basic")
                  }
              },
              new TestUser
@@ -34,7 +35,8 @@ namespace IdentityServerHost.Quickstart.UI
                  {
                      new Claim("given_name", "Lucy"),
                      new Claim("family_name", "Carlyle"),
-                     new Claim("address", "lCarlyle@test.com")
+                     new Claim("address", "lCarlyle@test.com"),
+                     new Claim("role", "Subscribed")
                  }
              }
          };
