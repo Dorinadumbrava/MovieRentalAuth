@@ -34,6 +34,17 @@ namespace MovieRental
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddAuthorization(authorizationOptions =>
+            {
+                authorizationOptions.AddPolicy(
+                    "CanBuyMerch",
+                    policyBuilder =>
+                    {
+                        policyBuilder.RequireAuthenticatedUser();
+                        policyBuilder.RequireClaim("country", "us");
+                        policyBuilder.RequireClaim("subscriptionlevel", "Subscribed");
+                    });
+            });
             services.AddHttpContextAccessor();
             services.AddTransient<BearerTokenHandler>();
             //the HttpClient will allow us to call or API
@@ -70,9 +81,13 @@ namespace MovieRental
                 options.Scope.Add("address");
                 options.Scope.Add("roles");
                 options.Scope.Add("movierentalapi");
+                options.Scope.Add("subscriptionlevel");
+                options.Scope.Add("country");
                 //options.ClaimActions.Remove("nbf"); //ClaimActions.Remove removes the filter that could delete the claim.
                 options.ClaimActions.DeleteClaims(new string[] { "sid", "idp", "s_hash", "auth_time"}); //Delete claim removes the claim
                 options.ClaimActions.MapUniqueJsonKey("role", "role");
+                options.ClaimActions.MapUniqueJsonKey("subscriptionlevel", "subscriptionlevel");
+                options.ClaimActions.MapUniqueJsonKey("country", "country");
                 options.SaveTokens = true;
                 options.ClientSecret = "secret";
                 options.GetClaimsFromUserInfoEndpoint = true;

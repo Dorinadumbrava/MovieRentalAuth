@@ -153,6 +153,43 @@ namespace MovieRental.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Policy = "CanBuyMerch")]
+        public async Task<IActionResult> BuyMerch()
+        {
+            var idpClient = _httpClientFactory.CreateClient("IDPClient");
+
+            var metaDataResponse = await idpClient.GetDiscoveryDocumentAsync();
+
+            if (metaDataResponse.IsError)
+            {
+                throw new Exception(
+                    "Problem accessing the discovery endpoint."
+                    , metaDataResponse.Exception);
+            }
+
+            var accessToken = await HttpContext
+              .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            var userInfoResponse = await idpClient.GetUserInfoAsync(
+               new UserInfoRequest
+               {
+                   Address = metaDataResponse.UserInfoEndpoint,
+                   Token = accessToken
+               });
+
+            if (userInfoResponse.IsError)
+            {
+                throw new Exception(
+                    "Problem accessing the UserInfo endpoint."
+                    , userInfoResponse.Exception);
+            }
+
+            var country = userInfoResponse.Claims
+                .FirstOrDefault(c => c.Type == "country")?.Value;
+
+            return View(new BuyMerchViewModel(country));
+        }
+
         public IActionResult Privacy()
         {
             return View();

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,6 +28,10 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="RentMovie">Rent a Movie</a>
                             </li>
+                        }
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "CanBuyMerch")).Succeeded)
+                        {
+                            <li><a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="BuyMerch">Merch</a></li>
                         }
 
                         @if (User.Identity.IsAuthenticated)
