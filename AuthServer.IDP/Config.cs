@@ -23,6 +23,32 @@ namespace AuthServer.IDP
 
         public static IEnumerable<Client> Clients =>
             new Client[]
-            { };
+            {
+                 new Client
+                {
+                    AccessTokenType = AccessTokenType.Reference,
+                    AccessTokenLifetime = 120,
+                    AllowOfflineAccess = true,
+                    UpdateAccessTokenClaimsOnRefresh = true,
+                    ClientName = "Movie Rental", //your app name
+                    ClientId = "movierentalclient", //your app clientID
+                    AllowedGrantTypes = GrantTypes.Code, //the flow we use
+                    RequirePkce = true, //Add PKce protection (doesn't work without)
+                    AlwaysIncludeUserClaimsInIdToken = true,
+                    RedirectUris = new List<string>() //unde userul se va intoarce dupa ce face login pe IDP
+                    {
+                        "https://localhost:44369/signin-oidc"
+                    },
+                    AllowedScopes = //the scopes we have in the identity resources
+                    {
+                        IdentityServerConstants.StandardScopes.OpenId,
+                        IdentityServerConstants.StandardScopes.Profile
+                    },
+                    ClientSecrets =
+                    {
+                        new Secret("secret".Sha256()) //the test clientSecret
+                    }
+                }
+            };
     }
 }

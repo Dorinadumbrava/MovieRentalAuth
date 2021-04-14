@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using MovieRental.Client.ViewModels;
 using MovieRental.Models;
 using Newtonsoft.Json;
@@ -11,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace MovieRental.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
@@ -23,6 +26,9 @@ namespace MovieRental.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var identityToken = await HttpContext
+               .GetTokenAsync(OpenIdConnectParameterNames.IdToken);
+            var claims = User.Claims;
             var httpClient = _httpClientFactory.CreateClient("APIClient");
 
             var request = new HttpRequestMessage(
