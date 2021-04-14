@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +22,7 @@ namespace MovieRental
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         }
 
         public IConfiguration Configuration { get; }
@@ -29,9 +32,17 @@ namespace MovieRental
         {
             services.AddControllersWithViews();
             services.AddHttpContextAccessor();
+            //the HttpClient will allow us to call or API
             services.AddHttpClient("APIClient", client =>
             {
                 client.BaseAddress = new Uri("https://localhost:44318/");
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
+            });
+            //the IDPclient will allow us to call the UserInfo endpoint from IDP
+            services.AddHttpClient("IDPClient", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:5001/");
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
             });
@@ -52,11 +63,12 @@ namespace MovieRental
                 options.ResponseType = "code";
                 //Disabling Pkce protection won't work with the latest version of Identity server
                 //options.UsePkce = false;
-                options.Scope.Add("openid");
-                options.Scope.Add("profile");
-                //options.Scope.Add("offline_access");
+                options.Scope.Add("address");
+                //options.ClaimActions.Remove("nbf"); //ClaimActions.Remove removes the filter that could delete the claim.
+                options.ClaimActions.DeleteClaims(new string[] { "sid", "idp", "s_hash", "auth_time"}); //Delete claim removes the claim
                 options.SaveTokens = true;
                 options.ClientSecret = "secret";
+                options.GetClaimsFromUserInfoEndpoint = true;
             });
         }
 

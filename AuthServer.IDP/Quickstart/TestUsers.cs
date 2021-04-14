@@ -11,7 +11,7 @@ namespace IdentityServerHost.Quickstart.UI
     {
         public static List<TestUser> Users = new List<TestUser>
         {
-             new TestUser
+            new TestUser
              {
                  SubjectId = "d860efca-22d9-47fd-8249-791ba61b07c7",
                  Username = "Anthony",
@@ -20,7 +20,8 @@ namespace IdentityServerHost.Quickstart.UI
                  Claims = new List<Claim>
                  {
                      new Claim("given_name", "Anthony"),
-                     new Claim("family_name", "Lockwood")
+                     new Claim("family_name", "Lockwood"),
+                     new Claim("address", "alockwood@test.com")
                  }
              },
              new TestUser
@@ -32,7 +33,8 @@ namespace IdentityServerHost.Quickstart.UI
                  Claims = new List<Claim>
                  {
                      new Claim("given_name", "Lucy"),
-                     new Claim("family_name", "Carlyle")
+                     new Claim("family_name", "Carlyle"),
+                     new Claim("address", "lCarlyle@test.com")
                  }
              }
          };

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using IdentityModel.Client;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -10,6 +11,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -77,6 +79,39 @@ namespace MovieRental.Controllers
             var responseSting = await response.Content.ReadAsStringAsync();
             var movie = JsonConvert.DeserializeObject<Movie>(responseSting);
             return View(new ReviewViewModel { Id = id, ReviewText = movie.Review, MovieName = movie.Title });
+        }
+
+        public async Task<IActionResult> RentMovie()
+        {
+            var idpClient = _httpClientFactory.CreateClient("IDPClient");
+
+            var metaDataResponse = await idpClient.GetDiscoveryDocumentAsync();
+
+            if (metaDataResponse.IsError)
+            {
+                throw new Exception( "Could not access the discovery endpoint.", metaDataResponse.Exception);
+            }
+
+            var accessToken = await HttpContext
+              .GetTokenAsync(OpenIdConnectParameterNames.AccessToken);
+
+            //Call to receive the user Info
+            var userInfoResponse = await idpClient.GetUserInfoAsync(
+               new UserInfoRequest
+               {
+                   Address = metaDataResponse.UserInfoEndpoint,
+                   Token = accessToken
+               });
+
+            if (userInfoResponse.IsError)
+            {
+                throw new Exception( "Could not access the discovery endpoint." , userInfoResponse.Exception);
+            }
+
+            var address = userInfoResponse.Claims
+                .FirstOrDefault(c => c.Type == "address")?.Value;
+
+            return View(new RentMovieViewModel(address));
         }
 
         [HttpPost]

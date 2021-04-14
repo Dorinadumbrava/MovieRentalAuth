@@ -14,7 +14,8 @@ namespace AuthServer.IDP
             new IdentityResource[]
             { 
                 new IdentityResources.OpenId(),
-                new IdentityResources.Profile()
+                new IdentityResources.Profile(),
+                new IdentityResources.Address()
             };
 
         public static IEnumerable<ApiResource> Apis =>
@@ -46,7 +47,8 @@ namespace AuthServer.IDP
                     AllowedScopes = //the scopes we have in the identity resources
                     {
                         IdentityServerConstants.StandardScopes.OpenId,
-                        IdentityServerConstants.StandardScopes.Profile
+                        IdentityServerConstants.StandardScopes.Profile,
+                        IdentityServerConstants.StandardScopes.Address
                     },
                     ClientSecrets =
                     {
