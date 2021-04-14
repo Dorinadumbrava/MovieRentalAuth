@@ -35,7 +35,7 @@ namespace AuthServer.IDP
                 new ApiResource(
                     "movierentalapi",
                     "Movie Rental API",
-                    new List<string>() { "role" })
+                    new List<string>() { "role" }) //this ensures the role is sent to API
                 {
                     Scopes = { "movierentalapi"},
                     ApiSecrets = { new Secret("apisecret".Sha256()) }

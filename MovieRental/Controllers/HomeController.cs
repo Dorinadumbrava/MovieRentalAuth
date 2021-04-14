@@ -81,6 +81,8 @@ namespace MovieRental.Controllers
             return View(new ReviewViewModel { Id = id, ReviewText = movie.Review, MovieName = movie.Title });
         }
 
+
+
         [Authorize(Roles = "Subscribed")]
         public async Task<IActionResult> RentMovie()
         {

@@ -27,9 +27,10 @@ namespace MovieRental.API.Controllers
         [HttpGet()]
         public IActionResult GetMovies()
         {
-            var imagesToReturn = mapper.Map<IEnumerable<Models.Movie>>(movieService.GetAllMovies());
+            var ownerId = User.Claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var moviesToReturn = mapper.Map<IEnumerable<Models.Movie>>(movieService.GetMoviesById(ownerId));
 
-            return Ok(imagesToReturn);
+            return Ok(moviesToReturn);
         }
 
         [HttpGet("{id}", Name = "GetImage")]
@@ -48,6 +49,7 @@ namespace MovieRental.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Subscribed")]
         public IActionResult AddReview(Guid id,
             [FromBody] MovieReview review)
         {
